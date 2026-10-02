@@ -1,0 +1,105 @@
+---
+# Ansible playbook for Flash VM provisioning
+# Installs base dependencies, L4T R36.5.0, and flash tools
+- name: Configure Flash VM
+  hosts: all
+  become: true
+  vars:
+    l4t_version: "36.5.0"
+    l4t_base_url: "https://developer.download.nvidia.com/embedded/L4T/r36_Release_v36.5.0/release"
+    install_dir: "/home/nvidia/nvidia/nvidia_sdk/JetPack_6.2.2_Linux_JETSON_ORIN_NANO_TARGETS"
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install base dependencies
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+          - python3-pip
+          - python3-venv
+          - usbutils
+          - lbzip2
+          - python3-pyelftools
+          - device-tree-compiler
+          - abootimg
+        state: present
+
+    - name: Create install directory
+      file:
+        path: "{{ install_dir }}"
+        state: directory
+        owner: nvidia
+        group: nvidia
+        mode: '0755'
+
+    - name: Download L4T BSP
+      get_url:
+        url: "{{ l4t_base_url }}/Jetson_Linux_R36.5.0_aarch64.tbz2"
+        dest: "{{ install_dir }}/Jetson_Linux_R36.5.0_aarch64.tbz2"
+        owner: nvidia
+        group: nvidia
+        mode: '0644'
+      register: bsp_download
+
+    - name: Download L4T Root Filesystem
+      get_url:
+        url: "{{ l4t_base_url }}/Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2"
+        dest: "{{ install_dir }}/Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2"
+        owner: nvidia
+        group: nvidia
+        mode: '0644'
+      register: rootfs_download
+
+    - name: Extract L4T BSP
+      unarchive:
+        src: "{{ install_dir }}/Jetson_Linux_R36.5.0_aarch64.tbz2"
+        dest: "{{ install_dir }}/"
+        remote_src: yes
+        creates: "{{ install_dir }}/Linux_for_Tegra/l4t_initrd_flash.sh"
+        owner: nvidia
+        group: nvidia
+
+    - name: Extract root filesystem
+      unarchive:
+        src: "{{ install_dir }}/Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2"
+        dest: "{{ install_dir }}/Linux_for_Tegra/rootfs/"
+        remote_src: yes
+        creates: "{{ install_dir }}/Linux_for_Tegra/rootfs/etc/os-release"
+      become: true
+
+    - name: Apply NVIDIA binaries
+      command:
+        cmd: ./apply_binaries.sh
+        chdir: "{{ install_dir }}/Linux_for_Tegra"
+        creates: "{{ install_dir }}/Linux_for_Tegra/rootfs/etc/nv_tegra_release"
+      become: true
+
+    - name: Install flash prerequisites
+      command:
+        cmd: ./tools/l4t_flash_prerequisites.sh
+        chdir: "{{ install_dir }}/Linux_for_Tegra"
+      become: true
+      ignore_errors: true
+
+    - name: Fix ownership
+      file:
+        path: /home/nvidia/nvidia
+        owner: nvidia
+        group: nvidia
+        recurse: yes
+
+    - name: Verify l4t_initrd_flash.sh exists
+      stat:
+        path: "{{ install_dir }}/Linux_for_Tegra/l4t_initrd_flash.sh"
+      register: flash_script
+
+    - name: Fail if flash script missing
+      fail:
+        msg: "l4t_initrd_flash.sh not found!"
+      when: not flash_script.stat.exists

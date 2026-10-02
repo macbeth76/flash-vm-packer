@@ -70,17 +70,22 @@ source "qemu" "flash-vm" {
   ssh_timeout      = "30m"
   ssh_handshake_attempts = 100
 
-  # Boot from ISO with autoinstall
-  # Note: 10.0.2.2 is QEMU user-mode host gateway ({{ .HTTPIP }} resolves to 127.0.0.1 which the guest can't reach)
+  # Boot from ISO with autoinstall via config-drive (cidata)
+  # cd_files creates a CIDATA ISO with nocloud user-data/meta-data
+  # More reliable than HTTP server for QEMU user-mode networking
+  cd_files = [
+    "http/user-data",
+    "http/meta-data"
+  ]
+  cd_label = "cidata"
+
   boot_wait = "10s"
   boot_command = [
     "<wait><wait><wait>e<wait>",
     "<down><down><down><end>",
-    " autoinstall ds=nocloud-net;s=http://10.0.2.2:{{ .HTTPPort }}/",
+    " autoinstall ds=nocloud;s=/dev/sr1",
     "<f10>"
   ]
-
-  http_directory = "http"
 
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
 }
@@ -92,29 +97,13 @@ build {
     "source.qemu.flash-vm"
   ]
 
-  # Base setup: user, SSH, dependencies
-  provisioner "shell" {
-    scripts = [
-      "../scripts/01-base.sh",
+  # Ansible provisioning: base setup, L4T R36.5.0, flash tools
+  provisioner "ansible" {
+    playbook_file = "../ansible/flash-vm.yml"
+    user          = var.ssh_username
+    extra_arguments = [
+      "--extra-vars", "ansible_ssh_pass=${var.ssh_password}",
+      "--extra-vars", "ansible_become_pass=${var.ssh_password}"
     ]
-    execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
-  }
-
-  # NVIDIA SDK Manager / JetPack 6.2.2
-  # NOTE: Requires manual SDK Manager run or pre-seeded installer.
-  # See docs/jetpack-install.md for details.
-  provisioner "shell" {
-    scripts = [
-      "../scripts/02-jetpack.sh",
-    ]
-    execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
-  }
-
-  # Flash tooling prerequisites
-  provisioner "shell" {
-    scripts = [
-      "../scripts/03-flash-deps.sh",
-    ]
-    execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
   }
 }
