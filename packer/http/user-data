@@ -4,8 +4,7 @@ autoinstall:
   identity:
     hostname: flash-vm
     username: nvidia
-    # Password is "nvidia"
-    password: "$6$sm.Byo.a777RnBCc$j.lciJXqMGGBF9JWy0ACbi.G51YvLyFMnbh5IFkVSdVrFlcTjHSSgbKp3FvKGAzbO7F6vYZXzdeCcYcbRmyyg0"
+    password: "$6$cvnfoCDTick8YdlO$sA.g9XyV0Kw2YO8Rb/7PlsAtZjNmPHuWl6rSy7XRLq.rsUD8n.jXdqgN41sXxAh92gZ7G8haAukyblu0ZC8/K."
   ssh:
     install-server: true
     allow-pw: true
@@ -17,5 +16,7 @@ autoinstall:
     - python3
     - qemu-guest-agent
   late-commands:
-    - curtin in-target --target=/target -- echo 'nvidia ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/nvidia
-    - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/nvidia
+    - curtin in-target --target=/target -- bash -c "echo 'nvidia:nvidia' | chpasswd"
+    - curtin in-target --target=/target -- bash -c "echo 'nvidia ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/nvidia && chmod 440 /etc/sudoers.d/nvidia"
+    - curtin in-target --target=/target -- bash -c "sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config"
+    - curtin in-target --target=/target -- bash -c "sed -i 's/^#*PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config"
