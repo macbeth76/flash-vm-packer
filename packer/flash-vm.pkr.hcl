@@ -91,7 +91,7 @@ build {
   # Base setup: user, SSH, dependencies
   provisioner "shell" {
     scripts = [
-      "scripts/01-base.sh",
+      "../scripts/01-base.sh",
     ]
     execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
   }
@@ -101,7 +101,7 @@ build {
   # See docs/jetpack-install.md for details.
   provisioner "shell" {
     scripts = [
-      "scripts/02-jetpack.sh",
+      "../scripts/02-jetpack.sh",
     ]
     execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
   }
@@ -109,7 +109,7 @@ build {
   # Flash tooling prerequisites
   provisioner "shell" {
     scripts = [
-      "scripts/03-flash-deps.sh",
+      "../scripts/03-flash-deps.sh",
     ]
     execute_command = "echo '${var.ssh_password}' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'"
   }
