@@ -58,6 +58,7 @@ source "qemu" "flash-vm" {
   disk_size   = "60000"
   disk_image  = false
   format      = "qcow2"
+  headless    = true  # No display (required for headless builds)
 
   # Network: user-mode with SSH forwarded to host port 2223
   net_device     = "virtio-net"
