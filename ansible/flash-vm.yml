@@ -6,7 +6,7 @@
   become: true
   vars:
     l4t_version: "36.5.0"
-    l4t_base_url: "https://developer.download.nvidia.com/embedded/L4T/r36_Release_v36.5.0/release"
+    l4t_base_url: "https://developer.download.nvidia.com/embedded/L4T/r36_Release_v5.0/release"
     install_dir: "/home/nvidia/nvidia/nvidia_sdk/JetPack_6.2.2_Linux_JETSON_ORIN_NANO_TARGETS"
 
   tasks:

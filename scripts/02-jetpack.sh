@@ -9,7 +9,7 @@
 set -euo pipefail
 
 L4T_VERSION="36.5.0"
-L4T_BASE="https://developer.download.nvidia.com/embedded/L4T/r36_Release_v36.5.0/release"
+L4T_BASE="https://developer.download.nvidia.com/embedded/L4T/r36_Release_v5.0/release"
 BSP_TARBALL="Jetson_Linux_R36.5.0_aarch64.tbz2"
 ROOTFS_TARBALL="Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2"
 

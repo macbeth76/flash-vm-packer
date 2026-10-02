@@ -1,0 +1,21 @@
+#cloud-config
+# Flash VM cloud-init config
+users:
+  - name: nvidia
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    # Password is "nvidia" - generated via: python3 -c "import crypt; print(crypt.crypt('nvidia', crypt.mksalt(crypt.METHOD_SHA512)))"
+    passwd: "$6$cvnfoCDTick8YdlO$sA.g9XyV0Kw2YO8Rb/7PlsAtZjNmPHuWl6rSy7XRLq.rsUD8n.jXdqgN41sXxAh92gZ7G8haAukyblu0ZC8/K."
+    lock_passwd: false
+
+ssh_pwauth: true
+
+packages:
+  - openssh-server
+  - python3
+  - qemu-guest-agent
+
+runcmd:
+  - systemctl enable --now ssh
+  - systemctl enable --now qemu-guest-agent
