@@ -18,12 +18,14 @@ packer {
 
 variable "iso_url" {
   type    = string
-  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.4-live-server-amd64.iso"
+  default = "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type    = string
-  default = "sha256:45f873de9f8cb637345394e7d479c1c55fc52e2eb2b521e156a36544b485"
+  default = "none"
+  # TODO: Add real SHA256 for ubuntu-22.04.5-live-server-amd64.iso
+  # Get from https://releases.ubuntu.com/22.04/SHA256SUMS
 }
 
 variable "ssh_username" {
