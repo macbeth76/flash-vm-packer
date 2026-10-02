@@ -71,11 +71,12 @@ source "qemu" "flash-vm" {
   ssh_handshake_attempts = 100
 
   # Boot from ISO with autoinstall
+  # Note: 10.0.2.2 is QEMU user-mode host gateway ({{ .HTTPIP }} resolves to 127.0.0.1 which the guest can't reach)
   boot_wait = "10s"
   boot_command = [
     "<wait><wait><wait>e<wait>",
     "<down><down><down><end>",
-    " autoinstall ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+    " autoinstall ds=nocloud-net;s=http://10.0.2.2:{{ .HTTPPort }}/",
     "<f10>"
   ]
 
