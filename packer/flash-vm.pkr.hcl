@@ -78,7 +78,7 @@ source "qemu" "flash-vm" {
     "<f10>"
   ]
 
-  http_directory = "packer/http"
+  http_directory = "http"
 
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
 }
