@@ -1,0 +1,23 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: flash-vm
+    username: nvidia
+    # Password is "nvidia" (mkpasswd -m sha-512)
+    password: "$6$rounds=4096$saltsalt$LxDg0yHk8mN2pQ4rS6tU8vW0xY2zA4bC6dE8fG0hI2jK4lM6nO8pQ0rS2tU4vW6xY8z"
+  ssh:
+    install-server: true
+    allow-pw: true
+  storage:
+    layout:
+      name: direct
+  packages:
+    - openssh-server
+    - python3
+    - qemu-guest-agent
+  late-commands:
+    - echo 'nvidia ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/nvidia
+    - chmod 440 /target/etc/sudoers.d/nvidia
+  user-data:
+    disable_root: false
