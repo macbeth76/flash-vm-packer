@@ -1,0 +1,4 @@
+output-*/
+*.qcow2
+*.log
+packer_cache/
