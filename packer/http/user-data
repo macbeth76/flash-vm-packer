@@ -4,7 +4,7 @@ autoinstall:
   identity:
     hostname: flash-vm
     username: nvidia
-    # Password is "nvidia" (generated with: python3 -c "import crypt; print(crypt.crypt('nvidia', crypt.mksalt(crypt.METHOD_SHA512)))")
+    # Password is "nvidia"
     password: "$6$sm.Byo.a777RnBCc$j.lciJXqMGGBF9JWy0ACbi.G51YvLyFMnbh5IFkVSdVrFlcTjHSSgbKp3FvKGAzbO7F6vYZXzdeCcYcbRmyyg0"
   ssh:
     install-server: true
@@ -17,7 +17,5 @@ autoinstall:
     - python3
     - qemu-guest-agent
   late-commands:
-    - echo 'nvidia ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/nvidia
-    - chmod 440 /target/etc/sudoers.d/nvidia
-  user-data:
-    disable_root: false
+    - curtin in-target --target=/target -- echo 'nvidia ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/nvidia
+    - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/nvidia
