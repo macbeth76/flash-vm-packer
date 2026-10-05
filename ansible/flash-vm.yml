@@ -28,6 +28,14 @@
           - python3-pyelftools
           - device-tree-compiler
           - abootimg
+          # Tegra flash tools need the C preprocessor to generate images
+          # (l4t_initrd_flash.sh failed without it 2026-10-04). Keep pinned
+          # in base deps so future VM rebuilds don't regress.
+          - cpp
+          # apply_binaries.sh runs x86/aarch64 chroot hooks; needs
+          # qemu-user-static installed first (flash failed without it
+          # 2026-10-05 before apply_binaries.sh could run).
+          - qemu-user-static
         state: present
 
     - name: Create install directory
