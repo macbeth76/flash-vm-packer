@@ -83,7 +83,7 @@ source "qemu" "flash-vm" {
   boot_command = [
     "<wait><wait><wait>e<wait>",
     "<down><down><down><end>",
-    " autoinstall ds=nocloud;s=/dev/sr1",
+    " autoinstall ds=nocloud",
     "<f10>"
   ]
 
