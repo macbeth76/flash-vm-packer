@@ -1,6 +1,7 @@
 #cloud-config
 autoinstall:
   version: 1
+  updates: no
   early-commands:
     - systemctl stop ssh
   identity:
