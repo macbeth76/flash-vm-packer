@@ -67,7 +67,7 @@ source "qemu" "flash-vm" {
 
   ssh_username     = var.ssh_username
   ssh_password     = var.ssh_password
-  ssh_timeout      = "30m"
+  ssh_timeout      = "90m"
   ssh_handshake_attempts = 100
 
   # Boot from ISO with autoinstall via config-drive (cidata)
